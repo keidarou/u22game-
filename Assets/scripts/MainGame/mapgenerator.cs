@@ -34,6 +34,7 @@ public class mapgenerator : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        float pikutocount = 0;//微妙なずれを発生させてテクスチャをよくするため
        map =GetComponent<automaticgenerator>().map;//これ、こっちの方が速く実行されていたらしぬので、そこを注意
         //縦に連なった壁
         for (int i = 0; i < width; i++)
@@ -44,8 +45,9 @@ public class mapgenerator : MonoBehaviour
                 if (i % 2 == 1) { continue; }
                 if (map[i, j] == 1 && map[i + 1, j] == 1 && map[i + 2, j] == 1)
                 {
+                    pikutocount+=0.001f;
                     GameObject instanttate = (GameObject)Instantiate(tate);
-                    instanttate.transform.position = new Vector3(-kiteix - haba *(width/2- jj+1), kiteiy + haba * (width/2-ii+1) - 0.5f, z);
+                    instanttate.transform.position = new Vector3(-kiteix - haba *(width/2- jj+1), kiteiy + haba * (width/2-ii+1) - 0.5f, z+pikutocount);
                 }
             }
         }
@@ -64,8 +66,9 @@ public class mapgenerator : MonoBehaviour
                     if (j % 2 == 1) { continue; }
                 if (map[i, j] == 1 && map[i, j + 1] == 1 && map[i, j + 2] == 1)
                 {
+                    pikutocount += 0.001f;
                     GameObject instanttate = (GameObject)Instantiate(yoko);
-                    instanttate.transform.position = new Vector3(-kiteix - haba * (width/2+1-jj) + 0.5f, kiteiy + haba *( width/2-ii+1), z);
+                    instanttate.transform.position = new Vector3(-kiteix - haba * (width/2+1-jj) + 0.5f, kiteiy + haba *( width/2-ii+1), z+pikutocount);
                 }
             }
         }

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 
 public class automaticgenerator : MonoBehaviour
 {
@@ -11,8 +11,10 @@ public class automaticgenerator : MonoBehaviour
     bool[,] kakutei = new bool[50, 50];
     public int nowx, nowy;
     public int downx, downy;
+    public int saiteigenkabe;
     public int ippen;//一辺の長さ 
     public int magarukaisuu;
+    int startupx, startdownx, startupy, startdowny;
     int cnt = 0;
     public int previous = 0;//0は下向き、1は右向き、２は下向き、３は左向き
                             //-------------------------------------------------//
@@ -28,8 +30,8 @@ public class automaticgenerator : MonoBehaviour
             }
             x += movex; y += movey;
         }
-  
-    //    map[y + movey, x + movex] = 1; kakutei[y + movey, x + movex] = true;
+
+        //    map[y + movey, x + movex] = 1; kakutei[y + movey, x + movex] = true;
 
         for (int i = 0; i < range; i++)
         {
@@ -41,32 +43,36 @@ public class automaticgenerator : MonoBehaviour
 
     void Awake()
     {
-        for (int i= 0; i <=ippen; i++)
+        startdownx = downx;
+        startdowny = downy;
+        startupx = nowx;
+        startupy = nowy;
+        for (int i = 0; i <= ippen; i++)
         {
             for (int j = 0; j <= ippen; j++)
             {
-                kakutei[i, j] = false;map[i, j] = 0;
+                kakutei[i, j] = false; map[i, j] = 0;
             }
         }
         for (int i = 0; i < 3; i++)//down
         {
-            map[nowy-1,nowx - 1 + i] = 1;
-            kakutei[nowy-1, nowx - 1 + i] = true ;
+            map[nowy - 1, nowx - 1 + i] = 1;
+            kakutei[nowy - 1, nowx - 1 + i] = true;
         }
         for (int i = 0; i < 3; i++)//up
         {
             map[downy + 1, downx - 1 + i] = 1;
             kakutei[downy + 1, downx - 1 + i] = true;
         }
-        for (int i = 0; i <= ippen ; i++)
+        for (int i = 0; i <= ippen; i++)
         {
-            map[0, i] = 1; map[i, 0] = 1; map[ippen , i] = 1; map[i, ippen ] = 1;
-            kakutei[0, i] = true; kakutei[i, 0] = true; kakutei[ippen , i] = true; kakutei[i, ippen ] = true;
+            map[0, i] = 1; map[i, 0] = 1; map[ippen, i] = 1; map[i, ippen] = 1;
+            kakutei[0, i] = true; kakutei[i, 0] = true; kakutei[ippen, i] = true; kakutei[i, ippen] = true;
         }
 
         for (int nannkaime = 0; nannkaime < magarukaisuu; nannkaime++)
         {
-            int muki, range = 0, hantairange = 0,downrange=0,downhantairange=0;
+            int muki, range = 0, hantairange = 0, downrange = 0, downhantairange = 0;
             //重力通りに動く玉から
             while (true)
             {
@@ -83,14 +89,14 @@ public class automaticgenerator : MonoBehaviour
                     bool flag = false;
                     for (int i = 0; i < 3; i++)
                     {
-                        if(map[nowy + range+1, nowx - 1 + i] ==0&& kakutei[nowy + range+1, nowx - 1 + i] == true){ flag = true;break; }//三マス確認
+                        if (map[nowy + range + 1, nowx - 1 + i] == 0 && kakutei[nowy + range + 1, nowx - 1 + i] == true) { flag = true; break; }//三マス確認
                     }
                     if (flag) { continue; }
                     if (!check(nowy, nowx, range, 0, 1)) { continue; }
                     for (int i = 0; i < 3; i++)
                     {
-                        map[nowy + range+1, nowx - 1 + i] = 1;//三マス塗る！
-                        kakutei[nowy + range+1, nowx - 1 + i] = true;//
+                        map[nowy + range + 1, nowx - 1 + i] = 1;//三マス塗る！
+                        kakutei[nowy + range + 1, nowx - 1 + i] = true;//
                     }
                     //----------------------------------------------//
                     /*if (kakutei[nowy - 1, nowx] == false)
@@ -134,25 +140,25 @@ public class automaticgenerator : MonoBehaviour
                         break;
                     }
                     //----------------------------------------------//
-                   /* if (kakutei[downy + 1, downx] == false)//直す
-                    {
-                        bool keidaroo = false;
-                        while (true)
-                        {
-                            if (downy == 15) { break; }//直す
-                            downhantairange = Random.Range(2, 15 - downy);//直す
-                            if (downhantairange % 2 == 0) { keidaroo = true; break; }
-                        }
-                        if (!keidaroo && kakutei[downy + downhantairange, downx] == false)//直す
-                        {
-                            for (int i = 0; i < 3; i++)
-                            {
-                                if (kakutei[downy + downhantairange, downx - 1 + i]) { continue; }//直す
-                                map[downy + downhantairange, downx - 1 + i] = 1;//直す
-                                kakutei[downy + downhantairange, downx - 1 + i] = true;
-                            }
-                        }
-                    }*/
+                    /* if (kakutei[downy + 1, downx] == false)//直す
+                     {
+                         bool keidaroo = false;
+                         while (true)
+                         {
+                             if (downy == 15) { break; }//直す
+                             downhantairange = Random.Range(2, 15 - downy);//直す
+                             if (downhantairange % 2 == 0) { keidaroo = true; break; }
+                         }
+                         if (!keidaroo && kakutei[downy + downhantairange, downx] == false)//直す
+                         {
+                             for (int i = 0; i < 3; i++)
+                             {
+                                 if (kakutei[downy + downhantairange, downx - 1 + i]) { continue; }//直す
+                                 map[downy + downhantairange, downx - 1 + i] = 1;//直す
+                                 kakutei[downy + downhantairange, downx - 1 + i] = true;
+                             }
+                         }
+                     }*/
                     downy -= downrange;
                 }
                 if (muki == 1)
@@ -169,8 +175,8 @@ public class automaticgenerator : MonoBehaviour
 
                     for (int i = 0; i < 3; i++)
                     {
-                        map[nowy - 1 + i, nowx + range+1] = 1;//直す
-                        kakutei[nowy - 1 + i, nowx + range+1] = true;//直す
+                        map[nowy - 1 + i, nowx + range + 1] = 1;//直す
+                        kakutei[nowy - 1 + i, nowx + range + 1] = true;//直す
                     }
                     //----------------------------------------------//
                     /*if (kakutei[nowy, nowx - 1] == false)//直す
@@ -215,25 +221,25 @@ public class automaticgenerator : MonoBehaviour
                         break;
                     }
                     //----------------------------------------------//
-                   /* if (kakutei[downy, downx + 1] == false)//直す
-                    {
-                        bool keidaroo = false;
-                        while (true)
-                        {
-                            if (downx == 15) { break; }//直す
-                            downhantairange = Random.Range(2, 15 - downx);//直す
-                            if (downhantairange % 2 == 0) { keidaroo = true; break; }
-                        }
-                        if (!keidaroo && kakutei[downy, downx + downhantairange] == false)//直す
-                        {
-                            for (int i = 0; i < 3; i++)
-                            {
-                                if (kakutei[downy - 1 + i, downx + downhantairange]) { continue; }//直す
-                                map[downy - 1 + i, downx + downhantairange] = 1;//直す
-                                kakutei[downy - 1 + i, downx + downhantairange] = true;
-                            }
-                        }
-                    }*/
+                    /* if (kakutei[downy, downx + 1] == false)//直す
+                     {
+                         bool keidaroo = false;
+                         while (true)
+                         {
+                             if (downx == 15) { break; }//直す
+                             downhantairange = Random.Range(2, 15 - downx);//直す
+                             if (downhantairange % 2 == 0) { keidaroo = true; break; }
+                         }
+                         if (!keidaroo && kakutei[downy, downx + downhantairange] == false)//直す
+                         {
+                             for (int i = 0; i < 3; i++)
+                             {
+                                 if (kakutei[downy - 1 + i, downx + downhantairange]) { continue; }//直す
+                                 map[downy - 1 + i, downx + downhantairange] = 1;//直す
+                                 kakutei[downy - 1 + i, downx + downhantairange] = true;
+                             }
+                         }
+                     }*/
                     downx -= downrange;//直す
                 }
                 if (muki == 2)//上
@@ -249,8 +255,8 @@ public class automaticgenerator : MonoBehaviour
                     if (!check(nowy, nowx, range, 0, -1)) { continue; }
                     for (int i = 0; i < 3; i++)
                     {
-                        map[nowy - range-1, nowx - 1 + i] = 1;//直す
-                        kakutei[nowy - range-1, nowx - 1 + i] = true;//直す
+                        map[nowy - range - 1, nowx - 1 + i] = 1;//直す
+                        kakutei[nowy - range - 1, nowx - 1 + i] = true;//直す
                     }
                     //----------------------------------------------//
                     /*if (kakutei[nowy + 1, nowx] == false)//直す
@@ -290,7 +296,8 @@ public class automaticgenerator : MonoBehaviour
                         {
                             map[downy + downrange + 1, downx - 1 + i] = 1;//三マス塗る！
                             kakutei[downy + downrange + 1, downx - 1 + i] = true;//
-                        }break;
+                        }
+                        break;
                     }
                     //----------------------------------------------//
                     /*if (kakutei[downy - 1, downx] == false)
@@ -316,7 +323,7 @@ public class automaticgenerator : MonoBehaviour
                 }
                 if (muki == 3)
                 {
-                    range = Random.Range(0,  nowx);//直す
+                    range = Random.Range(0, nowx);//直す
                     if (range % 2 == 1) { continue; }
                     bool flag = false;
                     for (int i = 0; i < 3; i++)
@@ -328,8 +335,8 @@ public class automaticgenerator : MonoBehaviour
 
                     for (int i = 0; i < 3; i++)
                     {
-                        map[nowy - 1 + i, nowx - range-1] = 1;//直す
-                        kakutei[nowy - 1 + i, nowx - range-1] = true;//直す
+                        map[nowy - 1 + i, nowx - range - 1] = 1;//直す
+                        kakutei[nowy - 1 + i, nowx - range - 1] = true;//直す
                     }
                     //----------------------------------------------//
                     /*if (kakutei[nowy, nowx + 1] == false)//直す
@@ -395,19 +402,30 @@ public class automaticgenerator : MonoBehaviour
                     }*/
                     downx += downrange;//直す
                 }
-       
-                Debug.Log(muki);         Debug.Log("up");Debug.Log(range);previous = muki;Debug.Log(hantairange);
-                Debug.Log("down");Debug.Log(downrange);Debug.Log(downhantairange);
+
+                Debug.Log(muki); Debug.Log("up"); Debug.Log(range); previous = muki; Debug.Log(hantairange);
+                Debug.Log("down"); Debug.Log(downrange); Debug.Log(downhantairange);
 
                 break;
             }
         }
-        map[nowy,nowx] = 2;
+        if (nowx == startupx && nowy == startupy) { SceneManager.LoadScene("MainGame"); }
+        if (downx == startdownx && downy == startdowny) { SceneManager.LoadScene("MainGame"); }
+        int pikuto = 0;
+        for (int i = 1; i < ippen - 1; i++)
+        {
+            for (int j = 1; j < ippen - 1; j++)
+            {
+                if (map[i, j] == 1) { pikuto++; }
+            }
+        }
+        if (pikuto < saiteigenkabe) { SceneManager.LoadScene("MainGame"); }
+        map[nowy, nowx] = 2;
         map[downy, downx] = 2;
         Debug.Log("  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7");
         for (int i = 0; i < 17; i++)
         {
-            string a="";a += i.ToString();a += " ";
+            string a = ""; a += i.ToString(); a += " ";
             for (int j = 0; j < 17; j++)
             {
                 /*if (kakutei[i, j]) { a += "1"; }

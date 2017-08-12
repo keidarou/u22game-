@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class movetheball : MonoBehaviour
-{	
+{
 
 
     //よく考えたら１８０度回転させたとき死ぬやんこれ
     //--------------------変数-------------------//
-	public bool pauseflag=false;//パス中ならtrueにします
-	public bool clearflag=true;//クリア時にtrueを代入してやってくださいクリア画面を立ち上げます<<<<<<<<<-----けいだろーーーーーーーーーーーーーーーーー！
-	bool idouchuu = true;//移動中ならfalse
-    
+    public bool pauseflag = false;//パス中ならtrueにします
+    public bool clearflag = true;//クリア時にtrueを代入してやってくださいクリア画面を立ち上げます<<<<<<<<<-----けいだろーーーーーーーーーーーーーーーーー！
+    bool idouchuu = true;//移動中ならfalse
 
-	//    Transform mokutekidown,  mokutekiup;//mokutekiは行くべき場所、nowは今の位置,upは上向きのボール、downは下向きのボール
+
+    //    Transform mokutekidown,  mokutekiup;//mokutekiは行くべき場所、nowは今の位置,upは上向きのボール、downは下向きのボール
     int nowrotation;//今のスマホの回転度
     GetAcc acc;//どれくらい回転しているかをみるため
     public GameObject mapgenerator, balldown, ballup;//それぞれのゲームオブジェクト、分からなければ連絡よろ
@@ -23,7 +23,9 @@ public class movetheball : MonoBehaviour
     public float speed;
     public float haba, kyoyouhanni;//移動する量、つまり一マスの間隔、許容範囲はボールのスピードを上げたとき、値を大きくしないとだめ！
     int karix, kariy;
+    public bool goalsitaka = false;
     public int kaisuuseigen;
+    public int goaldownx, goaldowny, goalupx, goalupy;
     private GUIStyle labelStyle;
     Vector3 upvectormokuteki, upvectornow, downvectornow, downvectormokuteki = Vector3.zero, directiondown, directionup;//移動にはvectorにする必要がある
     //-------------------------------------------------
@@ -94,9 +96,9 @@ public class movetheball : MonoBehaviour
         if (nowrotation == 2) { movexhoukou = 0; moveyhoukou = 1; }//上!!
         if (nowrotation == 3) { movexhoukou = -1; moveyhoukou = 0; }//左!!
                                                                     // Debug.Log(up); Debug.Log(down);
-        downvectormokuteki = balldown.transform.position;//とりあえず初期化
+      //  downvectormokuteki = balldown.transform.position;//とりあえず初期化
         downvectormokuteki += new Vector3(movexhoukou * haba * down, moveyhoukou * haba * down, 0f);//目的なので、それに方向×距離を足す
-        upvectormokuteki = ballup.transform.position;//同様
+   //     upvectormokuteki = ballup.transform.position;//同様
         upvectormokuteki -= new Vector3(movexhoukou * haba * up, moveyhoukou * haba * up, 0f);//同様
 
         //  Debug.Log(movexhoukou);Debug.Log(moveyhoukou);
@@ -151,15 +153,24 @@ public class movetheball : MonoBehaviour
         {
             idouchuu = true;
         }
-         else
-         {
-             directionup = (upvectormokuteki - upvectornow).normalized;
-             directiondown = (downvectormokuteki - downvectornow).normalized;
-             ballup.transform.Translate(directionup * Time.deltaTime * speed, Space.World);
-             balldown.transform.Translate(directiondown * Time.deltaTime * speed, Space.World);
-         }
-      //  ballup.transform.position = upvectormokuteki;
-       // balldown.transform.position = downvectormokuteki;
+        else
+        {
+            directionup = (upvectormokuteki - upvectornow).normalized;
+            directiondown = (downvectormokuteki - downvectornow).normalized;
+            ballup.transform.Translate(directionup * Time.deltaTime * speed, Space.World);
+            balldown.transform.Translate(directiondown * Time.deltaTime * speed, Space.World);
+        }
+
+        //  ballup.transform.position = upvectormokuteki;
+        // balldown.transform.position = downvectormokuteki;
+        if (nowdownx == goaldownx&&nowdowny==goaldowny&&nowupx==goalupx&&nowupy==goalupy)
+        {
+            goalsitaka = true;
+        }
+        if (nowdownx == goalupx && nowdowny == goalupy && nowupx == goaldownx && nowupy == goaldowny)
+        {
+            goalsitaka = true;
+        }
     }
 
     void OnGUI()
